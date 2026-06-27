@@ -27,3 +27,19 @@ public class ProductService
             })!;
     }
 }
+public async Task<Product?> GetProductAsync(int id)
+{
+    var response = await _httpClient.GetAsync($"/products/{id}");
+
+    if (!response.IsSuccessStatusCode)
+        return null;
+
+    var json = await response.Content.ReadAsStringAsync();
+
+    return JsonSerializer.Deserialize<Product>(
+        json,
+        new JsonSerializerOptions
+        {
+            PropertyNameCaseInsensitive = true
+        });
+}

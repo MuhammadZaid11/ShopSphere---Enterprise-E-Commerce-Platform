@@ -3,19 +3,22 @@ using ShopSphere.Web.Services;
 
 namespace ShopSphere.Web.Controllers;
 
-public class HomeController : Controller
+public class ProductController : Controller
 {
     private readonly ProductService _productService;
 
-    public HomeController(ProductService productService)
+    public ProductController(ProductService productService)
     {
         _productService = productService;
     }
 
-    public async Task<IActionResult> Index()
+    public async Task<IActionResult> Details(int id)
     {
-        var products = await _productService.GetProductsAsync();
+        var product = await _productService.GetProductAsync(id);
 
-        return View(products);
+        if (product == null)
+            return NotFound();
+
+        return View(product);
     }
 }
