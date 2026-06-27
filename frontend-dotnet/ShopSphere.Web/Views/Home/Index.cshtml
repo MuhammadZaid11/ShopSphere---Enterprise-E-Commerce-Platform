@@ -1,0 +1,28 @@
+﻿@model List<ShopSphere.Web.Models.Product>
+
+<h2>Featured Products</h2>
+
+<div class="row">
+
+@foreach (var product in Model)
+{
+    <div class="col-md-4">
+
+        <div class="card mb-3">
+
+            <div class="card-body">
+
+                <h5>@product.Name</h5>
+
+                <p>@product.Description</p>
+
+                <strong>$@product.Price</strong>
+
+            </div>
+
+        </div>
+
+    </div>
+}
+
+</div>
