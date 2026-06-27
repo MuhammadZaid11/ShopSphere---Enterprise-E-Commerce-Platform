@@ -1,37 +1,26 @@
-﻿@model List<ShopSphere.Web.Models.Product>
-
-<h2>Featured Products</h2>
-
-<div class="row">
-
-@foreach (var product in Model)
-{
-    <div class="col-md-4">
-
-        <div class="card mb-3">
-
-            <div class="card-body">
-
-                <h5>
-    <a asp-controller="Product"
-       asp-action="Details"
-       asp-route-id="@product.Id"
-       class="text-decoration-none">
-
-        @product.Name
-
-    </a>
-</h5>
-
-                <p>@product.Description</p>
-
-                <strong>$@product.Price</strong>
-
-            </div>
-
-        </div>
-
-    </div>
+@model List<ShopSphere.Web.Models.Product>
+@{
+    ViewData["Title"] = "Home Page";
 }
 
+<h2 class="mb-4 text-center">Featured Products</h2>
+
+<div class="product-grid">
+    @if(Model != null)
+    {
+        @foreach(var product in Model)
+        {
+            <div class="product-card glass">
+                <img src="/api/placeholder/400/320" alt="@product.Name" style="width: 100%; border-radius: 8px; margin-bottom: 1rem;" />
+                <div class="product-title">@product.Name</div>
+                <p class="text-muted" style="font-size: 0.9rem; margin-bottom: 1rem;">@product.Description</p>
+                <div class="product-price">$@product.Price</div>
+                <button class="btn btn-primary" style="width: 100%;">Add to Cart</button>
+            </div>
+        }
+    }
+    else
+    {
+        <p>No products available at the moment.</p>
+    }
 </div>

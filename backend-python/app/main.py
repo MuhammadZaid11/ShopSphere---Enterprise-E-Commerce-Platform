@@ -4,7 +4,11 @@ from prometheus_fastapi_instrumentator import Instrumentator
 from app.database import Base, engine
 from app.models.product import Product
 from app.routes.product import router as product_router
+from app.routes.auth import router as auth_router
+from app.routes.order import router as order_router
 from app.redis_client import redis_client
+from app.models.user import User
+from app.models.order import Order, OrderItem
 
 # 1. Initialize the app first!
 app = FastAPI(title="ShopSphere API")
@@ -26,5 +30,7 @@ def health():
 # 3. Include routers and setup middleware/instrumentation
 Base.metadata.create_all(bind=engine)
 app.include_router(product_router)
+app.include_router(auth_router)
+app.include_router(order_router)
 
 Instrumentator().instrument(app).expose(app)

@@ -26,8 +26,7 @@ public class ProductService
                 PropertyNameCaseInsensitive = true
             })!;
     }
-}
-public async Task<Product?> GetProductAsync(int id)
+    public async Task<Product?> GetProductAsync(int id)
 {
     var response = await _httpClient.GetAsync($"/products/{id}");
 
@@ -42,4 +41,5 @@ public async Task<Product?> GetProductAsync(int id)
         {
             PropertyNameCaseInsensitive = true
         });
+    }
 }
