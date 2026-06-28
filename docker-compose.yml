@@ -1,4 +1,22 @@
+version: "3.9"
 services:
+
+  frontend:
+    image: muhammadzaid673/shopsphere-frontend:v1
+    container_name: shopsphere-frontend
+    ports:
+      - 5010:8080
+    depends_on:
+      backend:
+        condition: service_healthy
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+    networks:
+      - shopsphere-network
   backend:
     image: muhammadzaid673/shopsphere-backend:v1
     container_name: shopsphere-backend
@@ -6,29 +24,60 @@ services:
       - ./backend-python/.env
     depends_on:
       postgres:
-        condition: service_started
+        condition: service_healthy
       redis:
-        condition: service_started
+        condition: service_healthy
     ports:
       - "8000:8000"
+    restart: unless-stopped
+    networks:
+      - shopsphere-network
+    healthcheck:
+      test: ["CMD","python","-c","import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
 
   postgres:
     image: postgres:17
     container_name: shopsphere-postgres
     environment:
-      POSTGRES_DB: shopsphere
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     ports:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    restart: unless-stopped
+    networks:
+      - shopsphere-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   redis:
     image: redis:8
     container_name: shopsphere-redis
     ports:
       - "6379:6379"
+    restart: unless-stopped
+    networks:
+      - shopsphere-network
+    volumes:
+      - redis_data:/data
+    command: redis-server --appendonly yes
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
 volumes:
   postgres_data:
+  redis_data:
+networks:
+  shopsphere-network:
+    driver: bridge
